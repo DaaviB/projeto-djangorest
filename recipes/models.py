@@ -1,6 +1,6 @@
 import os
 import string
-from collections import defaultdict
+# from collections import defaultdict
 from random import SystemRandom
 
 from django.conf import settings
@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models import F, Value
 from django.db.models.functions import Concat
-from django.forms import ValidationError
+# from django.forms import ValidationError
 from django.urls import reverse
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
@@ -109,21 +109,21 @@ class Recipe(models.Model):
 
         return saved
 
-    def clean(self, *args, **kwargs):
-        error_messages = defaultdict(list)
+    # def clean(self, *args, **kwargs):
+    #     error_messages = defaultdict(list)
 
-        recipe_from_db = Recipe.objects.filter(
-            title__iexact=self.title
-        ).first()
+    #     recipe_from_db = Recipe.objects.filter(
+    #         title__iexact=self.title
+    #     ).first()
 
-        if recipe_from_db:
-            if recipe_from_db.pk != self.pk:
-                error_messages['title'].append(
-                    'Found recipes with the same title'
-                )
+    #     if recipe_from_db:
+    #         if recipe_from_db.pk != self.pk:
+    #             error_messages['title'].append(
+    #                 'Found recipes with the same title'
+    #             )
 
-        if error_messages:
-            raise ValidationError(error_messages)
+    #     if error_messages:
+    #         raise ValidationError(error_messages)
 
     class Meta:
         verbose_name = _('Recipe')
