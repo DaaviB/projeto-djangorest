@@ -9,7 +9,7 @@ authors_api_v2_router = SimpleRouter()
 authors_api_v2_router.register(
     'api', views.AuthorViewSet, basename='author-api')
 
-
+print(authors_api_v2_router.urls)
 urlpatterns = [
     path('register/', views.register_view, name='register'),
     path('register/create/', views.register_create, name='register_create'),
