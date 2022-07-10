@@ -24,6 +24,7 @@ class RecipeApiV2ViewSet(ModelViewSet):
     pagination_class = RcipeApiV2Pagination
     permission_classes = [IsAuthenticatedOrReadOnly, ]
     renderer_classes = [JSONRenderer, ]
+    http_method_names = ['get', 'post', 'patch', 'head', 'options', 'delete', ]
 
     def get_queryset(self):
         qs = super().get_queryset()
