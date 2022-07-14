@@ -15,6 +15,36 @@ class RecipeApiV2Test(APITestCase, RecipeMixin):
         response = self.client.get(api_url)
         return response
 
+    def make_user(self):
+        userdata = {
+            'username': 'user_tester',
+            'password': 'abc1234//',
+        }
+        self.make_author(**userdata)
+        return userdata
+
+    def make_jwt_request(self):
+        userdata = self.make_user()
+        jwt_url = reverse('recipes:token_obtain_pair')
+        return self.client.post(jwt_url, data=userdata)
+
+    def get_jwt_acces_token(self):
+        token_response = self.make_jwt_request()
+        access_token = token_response.data.get('access')
+        return access_token
+
+    def get_recipe_raw_data(self):
+        data = {
+            'title': 'my_test_title',
+            'description': 'my_test_description',
+            'preparation_time': 3,
+            'preparation_time_unit': 'my_test_preparation_time_unit',
+            'servings': 3,
+            'servings_unit': 'my_test_sevings_unit',
+            'preparation_steps': 'my_test_preparation_steps'
+        }
+        return data
+
     def test_recipe_api_list_returns_status_code_200(self):
         response = self.get_recipe_api_list()
         self.assertEqual(response.status_code, 200)
@@ -66,3 +96,12 @@ class RecipeApiV2Test(APITestCase, RecipeMixin):
         api_url = self.get_recipe_reverse_url()
         response = self.client.post(api_url)
         self.assertEqual(response.status_code, 401)
+
+    def test_recipe_api_list_logged_user_can_create_a_recipe(self):
+        token = self.get_jwt_acces_token()
+        data = self.get_recipe_raw_data()
+        response = self.client.post(
+            self.get_recipe_reverse_url(), data=data,
+            HTTP_AUTHORIZATION=F'Bearer {token}'
+        )
+        self.assertEqual(response.status_code, 201)
