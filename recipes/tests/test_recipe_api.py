@@ -142,3 +142,24 @@ class RecipeApiV2Test(APITestCase, RecipeApiV2TestMixin):
         # Assertion
         self.assertEqual(response.data.get('title'), wanted_title)
         self.assertEqual(response.status_code, 200)
+
+    def test_recipe_api_list_logged_user_cant_update_a_recipe_owned_by_another_user(self):  # noqa
+        # Arrange (Configs)
+        recipe = self.make_recipe(title='I cant be UPDATED')
+        author = self.make_user(username='tester_user')
+        token = self.get_auth_data(author).get('access_token')
+        not_wanted_title = 'Trying update the recipe'
+
+        # Action
+        response = self.client.patch(
+            reverse(
+                'recipes:recipes-api-detail', args=(recipe.id,)),
+            data={
+                'title': not_wanted_title,
+            },
+            HTTP_AUTHORIZATION=F'Bearer {token}'
+        )
+
+        # Assertion
+        self.assertNotEqual(response.data.get('title'), not_wanted_title)
+        self.assertEqual(response.status_code, 403)
